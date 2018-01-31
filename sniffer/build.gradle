@@ -1,0 +1,19 @@
+apply from: "application.gradle"    
+
+dependencies {
+
+    compile project(':jdiscript')
+    
+    // logging
+    compile 'org.apache.logging.log4j:log4j-1.2-api:' + versionProps['log4j.version']
+    
+    // required by VM
+    compile files("${System.properties['java.home']}/../lib/tools.jar")
+    
+    // utilities
+    compile 'commons-io:commons-io:' + versionProps['commons-io.version']
+    
+    // test
+    testCompile 'junit:junit:' + versionProps['junit.version']
+}
+

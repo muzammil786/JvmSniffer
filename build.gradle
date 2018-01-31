@@ -1,0 +1,71 @@
+plugins {
+    id "com.jfrog.artifactory" version "4.1.1"
+    id 'nebula.dependency-lock' version '4.3.0'
+    id "org.sonarqube" version "2.1"
+}
+
+ext {
+    gradle_lib_path = "http://artifactory:8081/artifactory/configuration/gradle"
+}
+
+ext.gitProjectName = rootProject.name
+description = "Root project for ${gitProjectName}."
+
+apply from: "$gradle_lib_path/common-helpers.gradle"
+apply from: "$gradle_lib_path/artifactory.gradle"
+apply from: "$gradle_lib_path/sonarqube.gradle"
+
+group "com.ueas.tai"
+// version = versionProps['module.version'] Uncomment this only for dev purposes. Otherwise passed in as gradle switch -Pversion
+//Skip artifactory publish for the root project
+artifactoryPublish.skip = true
+
+allprojects {
+    apply plugin: 'maven-publish'
+    apply plugin: "ivy-publish"
+
+    apply plugin: 'nebula.dependency-lock'
+    apply plugin: "com.jfrog.artifactory"
+
+    repositories {
+        maven {
+            url artifactory_contextUrl + "/gradle/"
+            credentials {
+                username = artifactory_user
+                password = artifactory_password
+            }
+        }
+    }
+
+    group = rootProject.group
+    version = rootProject.version
+
+    // fail eagerly on version conflict (includes transitive dependencies) and enforce certain dependency versions
+    configurations.all {
+        resolutionStrategy {
+            cacheDynamicVersionsFor 0, 'seconds'
+            cacheChangingModulesFor 0, 'seconds'
+        }
+    }
+}
+
+configure(javaProjects()) {
+    apply plugin: 'idea'
+    apply plugin: 'java'
+
+    sourceSets {
+        main {
+            resources {
+                exclude '*'
+            }
+        }
+    }
+
+    configure(allprojects - project(':jdiscript')) {
+        apply from: "$gradle_lib_path/checkstyle.gradle"
+        apply from: "$gradle_lib_path/java-publications.gradle"
+//    apply from: "$gradle_lib_path/coverage.gradle"
+    }
+
+    javadoc.setFailOnError(false) //Uncomment if non java 8 projects and only if not required.
+}

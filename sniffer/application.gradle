@@ -1,0 +1,16 @@
+apply plugin: 'application'
+mainClassName = "com.ueas.tai.Sniffer"
+
+applicationDistribution.from("src/main/resources/") {
+    into "config"
+}
+
+startScripts {
+    classpath += files('src/main/resources/')
+    doLast {
+        def windowsScriptFile = file getWindowsScript()
+        def unixScriptFile    = file getUnixScript()
+        windowsScriptFile.text = windowsScriptFile.text.replace('%APP_HOME%\\lib\\resources', '%APP_HOME%\\config')
+        unixScriptFile.text  = unixScriptFile.text.replace('$APP_HOME/lib/resources', '$APP_HOME/config')
+    }
+}
