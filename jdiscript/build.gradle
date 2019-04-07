@@ -1,5 +1,7 @@
+
+
 dependencies {
-    compile 'org.apache.logging.log4j:log4j-1.2-api:' + versionProps['log4j.version']
+    compile 'org.apache.logging.log4j:log4j-1.2-api:2.10.0'
     compile files("${System.properties['java.home']}/../lib/tools.jar")
-    testCompile 'junit:junit:' + versionProps['junit.version']
+    testCompile 'junit:junit:4.11'
 }

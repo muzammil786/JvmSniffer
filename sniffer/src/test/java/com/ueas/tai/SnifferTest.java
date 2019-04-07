@@ -7,6 +7,7 @@
 
 package com.ueas.tai;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
 
 import com.sun.jdi.VirtualMachine;
@@ -35,13 +36,14 @@ public class SnifferTest {
 
       // start sniffing
       Sniffer sniffer = new Sniffer();
+      sniffer.setPrintOutputOnExit(false);
       VirtualMachine vm = VirtualMachineFactory.getVirtualMachine("localhost", "9865");
       sniffer.startSniffing(vm);
       process.destroy();
+      sniffer.printSniffingOutput();
 
       // read result
       Path path = Paths.get("build/output/method-trace.log");
-      assertTrue(Files.exists(path));
       // these methods should be in the trace
       List<String> lines = Files.readAllLines(path);
       String result = lines.stream().collect(Collectors.joining(","));

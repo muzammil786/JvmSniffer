@@ -1,19 +1,21 @@
-apply from: "application.gradle"    
+apply from: "application.gradle"
 
 dependencies {
 
     compile project(':jdiscript')
     
     // logging
-    compile 'org.apache.logging.log4j:log4j-1.2-api:' + versionProps['log4j.version']
-    
+    compile 'org.apache.logging.log4j:log4j-1.2-api:2.10.0'
+
     // required by VM
     compile files("${System.properties['java.home']}/../lib/tools.jar")
     
     // utilities
-    compile 'commons-io:commons-io:' + versionProps['commons-io.version']
+    compile 'commons-io:commons-io:2.5'
     
     // test
-    testCompile 'junit:junit:' + versionProps['junit.version']
+    testCompile 'junit:junit:4.11'
+    testCompile group: 'org.awaitility', name: 'awaitility', version: '3.0.0'
+
 }
 
