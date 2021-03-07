@@ -3,4 +3,8 @@
 /.idea/
 *.iml
 /config/
-*/build/
+**/build/
+**/out/
+.classpath
+.project
+*.prefs

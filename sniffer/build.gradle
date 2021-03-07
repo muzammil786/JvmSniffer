@@ -12,10 +12,8 @@ dependencies {
     
     // utilities
     compile 'commons-io:commons-io:2.5'
-    
+
     // test
     testCompile 'junit:junit:4.11'
-    testCompile group: 'org.awaitility', name: 'awaitility', version: '3.0.0'
-
 }
 

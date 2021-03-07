@@ -15,7 +15,7 @@ import java.util.Collection;
 
 public class FilePrinter implements Printer {
 
-  private File file;
+  private final File file;
 
   public FilePrinter(File file) {
     this.file = file;

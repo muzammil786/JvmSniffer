@@ -7,14 +7,10 @@
 
 package com.ueas.tai;
 
-import static org.jdiscript.util.Utils.println;
-
-import com.sun.jdi.VMDisconnectedException;
 import com.sun.jdi.VirtualMachine;
 import com.ueas.tai.events.MethodTracer;
 import com.ueas.tai.printer.FilePrinter;
 import com.ueas.tai.vm.VirtualMachineFactory;
-
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.jdiscript.JDIScript;
@@ -37,13 +33,15 @@ public class Sniffer {
             JDIScript jdiScript = new JDIScript(vm);
             methodTracer = new MethodTracer();
 
+            String classFilter = Configuration.getConfiguration().getProperty("class.filter");
             jdiScript.methodEntryRequest()
-                    .addClassFilter(Configuration.getConfiguration().getProperty("class.filter"))
+                    .addClassFilter(classFilter)
                     .addHandler(methodTracer).enable();
+            LOGGER.debug("Class filter added: " + classFilter);
 
             // to print the info out before termination
             if(isPrintOutputOnExit()) {
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> printSniffingOutput()));
+                Runtime.getRuntime().addShutdownHook(new Thread(this::printSniffingOutput));
             }
 
             jdiScript.run();

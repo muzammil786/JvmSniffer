@@ -1,12 +1,12 @@
 apply plugin: 'application'
 mainClassName = "com.ueas.tai.Sniffer"
 
-applicationDistribution.from("src/main/resources/") {
+applicationDistribution.from("src/test/resources/") {
     into "config"
 }
 
 startScripts {
-    classpath += files('src/main/resources/')
+    classpath += files('src/test/resources/')
     doLast {
         def windowsScriptFile = file getWindowsScript()
         def unixScriptFile    = file getUnixScript()

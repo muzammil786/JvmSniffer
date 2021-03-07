@@ -7,14 +7,18 @@
 
 package com.ueas.tai.info;
 
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.jdi.LocalVariable;
 import com.sun.jdi.Method;
+import com.sun.jdi.VMDisconnectedException;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class MethodInfo {
 
-  Method method;
+  final Method method;
 
   public MethodInfo(Method method) {
     this.method = method;
@@ -39,29 +43,39 @@ public class MethodInfo {
 
   @Override
   public String toString() {
+
     // process parameter names to get only their names. 
     // This is to make it compatible with diffj that reports only parameter names and not their types.
-    String parameters = method.argumentTypeNames().stream()
-        .map(s -> s.substring(s.lastIndexOf('.') + 1)).collect(Collectors.joining(","));
-    StringBuilder builder = new StringBuilder();
-    builder.append(method.declaringType().name())
-        .append(".")
-        .append(getName())
-        .append("(")
-        .append(parameters)
-        .append(")");
+    String parameters = "";
+    String returnType = "";
 
-    return builder.toString();
+    try {
+      if(!method.arguments().isEmpty()) {
+        parameters = method.arguments().stream().map(LocalVariable::signature).collect(Collectors.joining());
+      }
+      returnType = method.returnType().signature();
+    } catch (AbsentInformationException | ClassNotLoadedException | VMDisconnectedException e) {
+      e.printStackTrace();
+    }
+
+    return method.declaringType().name() +
+            "." +
+            getName() +
+            "(" +
+            parameters +
+            ")" +
+            returnType;
   }
 
   /**
-   * Gets the name of the method. If it is a constructor returns the class name instead of default name: init.
+   * Gets the name of the method.
    */
   public String getName() {
-    if (method.isConstructor()) {
+    //If it is a constructor returns the class name instead of default name: init.
+    /*if (method.isConstructor()) {
       String declaringType = method.declaringType().name();
       return declaringType.substring(declaringType.lastIndexOf('.') + 1);
-    }
+    }*/
     return method.name();
   }
 

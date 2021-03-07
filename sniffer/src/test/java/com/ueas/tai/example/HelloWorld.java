@@ -8,6 +8,7 @@
 package com.ueas.tai.example;
 
 import java.lang.management.ManagementFactory;
+import java.util.concurrent.TimeUnit;
 
 /**
  * HelloWorld example to test method trace sniffing. Different methods are called in a loop and the sniffer should be able to 
@@ -59,6 +60,7 @@ public class HelloWorld {
     if (args.length > 0) {
       try {
         limit = Integer.parseInt(args[0]);
+        System.out.println("Limit set for " + limit);
       } catch (Exception ex) {
         System.out.println("Exception occurred while parsing the argument: " + args[0]);
       }
@@ -66,7 +68,7 @@ public class HelloWorld {
     
     int finalLimit = limit;
     Thread thread = new Thread(() -> {
-      System.out.printf("Running loop for " + finalLimit + " times.\n");
+      System.out.println("Running loop for " + finalLimit + " times.");
       for (int i = 0; i < finalLimit; i++) {
         HelloWorld hello = new HelloWorld();
         hello.setHelloTo("Mary");
@@ -74,7 +76,7 @@ public class HelloWorld {
         System.out.println(hello.sayHello("Salam"));
         System.out.println(hello.sayHelloInFrench());
         try {
-          Thread.sleep(3000);
+          TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
