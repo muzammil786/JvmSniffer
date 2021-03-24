@@ -20,5 +20,16 @@ allprojects {
             cacheChangingModulesFor 0, 'seconds'
         }
     }
+
+    // Intellij creates output in 'out' folder. This is a fix to use 'build' dir
+    allprojects {
+        apply plugin: 'idea'
+        idea {
+            module {
+                outputDir file('build/classes/main')
+                testOutputDir file('build/classes/test')
+            }
+        }
+    }
 }
 
