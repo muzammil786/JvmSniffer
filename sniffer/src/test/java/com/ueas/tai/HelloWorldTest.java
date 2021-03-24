@@ -1,17 +1,7 @@
-/**********************************************************************.
- *                                                                     *
- *         Copyright (c) Ultra Electronics Airport Systems 2017        *
- *                         All rights reserved                         *
- *                                                                     *
- ***********************************************************************/
-
 package com.ueas.tai;
 
-import com.sun.jdi.VirtualMachine;
-import com.ueas.tai.vm.VirtualMachineFactory;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 
-public class SnifferTest {
+public class HelloWorldTest extends BaseSnifferTest {
 
   @Test
   public void startSniffing() {
@@ -28,17 +18,12 @@ public class SnifferTest {
       Process process = new JavaProgramRunner()
           .classpath(System.getProperty("user.dir") + "/build/classes/test")
           .program("com.ueas.tai.example.HelloWorld")
-          .arguments("2")
+          .arguments("2") // run for 2 seconds
           .execute();
-
-      // start sniffing
-      Sniffer sniffer = new Sniffer();
-      sniffer.setPrintOutputOnExit(false);
-      VirtualMachine vm = VirtualMachineFactory.getVirtualMachine("localhost", "9865");
-      sniffer.startSniffing(vm);
+      // execute sniffing for 3 seconds which is enough to print some results
+      executeSniffer(3);
+      // stop program
       process.destroy();
-      sniffer.printSniffingOutput();
-
       // read result
       Path path = Paths.get("build/output/method-trace.log");
       // these methods should be in the trace
@@ -52,7 +37,7 @@ public class SnifferTest {
       assertTrue(result.contains("com.ueas.tai.example.HelloWorld.sayHelloInFrench()Ljava/lang/String;"));
       assertTrue(result.contains("com.ueas.tai.example.HelloWorld.sayHello(Ljava/lang/String;)Ljava/lang/String;"));
 
-    } catch (IOException e) {
+    } catch (Exception e) {
       e.printStackTrace();
     }
   }
